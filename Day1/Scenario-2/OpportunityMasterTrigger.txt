@@ -1,0 +1,37 @@
+trigger OpportunityMasterTrigger on Opportunity (before insert,after insert,before update,after update,before delete,after delete,after undelete){
+    if(trigger.isUpdate){
+        if(trigger.isAfter){
+            if(!OpportunityMasterTriggerHandler.afterUpdateDone){
+                OpportunityMasterTriggerHandler.afterUpdateDone = true;
+                OpportunityMasterTriggerHandler.afterUpdate();
+            }
+        }
+    }
+    
+    if(trigger.isInsert){
+        if(trigger.isAfter){
+            if(!OpportunityMasterTriggerHandler.afterInsertDone){
+                OpportunityMasterTriggerHandler.afterInsertDone = true;
+                OpportunityMasterTriggerHandler.afterInsert();
+            }
+        }
+    }
+     if(trigger.isDelete){
+        if(trigger.isAfter){
+            if(!OpportunityMasterTriggerHandler.beforeDeleteDone){
+                OpportunityMasterTriggerHandler.beforeDeleteDone = true;
+                OpportunityMasterTriggerHandler.beforeDelete();
+            }
+        }
+    }
+    if(trigger.isUndelete){
+        if(trigger.isAfter){
+            if(!OpportunityMasterTriggerHandler.afterUnDeleteDone){
+                OpportunityMasterTriggerHandler.afterUnDeleteDone = true;
+                OpportunityMasterTriggerHandler.afterUnDelete();
+            }
+        }
+    }
+    
+
+}

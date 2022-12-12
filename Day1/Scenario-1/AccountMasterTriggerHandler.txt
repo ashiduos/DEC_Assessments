@@ -1,0 +1,17 @@
+public class AccountMasterTriggerHandler{
+    public static Boolean afterUpdateDone = false;
+    public static void afterUpdate(){
+        Set<Id> accIds = trigger.newMap.keySet();
+        List<Account> accList = new List<Account>();
+        List<Contact> contList = new List<Contact>();
+        accList = [Select Id,Name,Rating,(Select Id,Description from Contacts) from Account where Id IN:accIds];
+        for(Account acc : accList){
+            String oldRating = ((Account)Trigger.oldMap.get(acc.id)).Rating;
+            for(Contact cont : acc.Contacts){
+                cont.Description = 'Account rating field was changed from '+oldRating+ ' to '+acc.Rating;
+                contList.add(cont);
+            }
+        }  
+        update contList;
+    }
+}

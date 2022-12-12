@@ -1,0 +1,2 @@
+Every time when the Rating field gets updated, update the desciption of all the related objects with the changes done in Account record. Ex: Account rating field was changed from $PriorValue to $CurrentValue. 
+Implement using trigger handler and also write test class to ensure above 90% code coverage.

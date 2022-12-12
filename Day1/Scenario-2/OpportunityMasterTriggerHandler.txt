@@ -1,0 +1,80 @@
+public class OpportunityMasterTriggerHandler {
+    
+    public static boolean afterInsertDone = false;
+    public static boolean afterUpdateDone = false;
+    public static boolean beforeDeleteDone = false;
+    public static boolean afterUnDeleteDone = false;
+    
+    
+    public static void afterUpdate(){
+        totalRevenuePerAccountAfterUpdate();  
+        //totalRevenuePerAccount((List<Opportunity>)Trigger.new);
+    }
+    
+    public static void afterInsert(){
+        totalRevenuePerAccount((List<Opportunity>)Trigger.new);   
+    }
+    public static void beforeDelete(){
+        totalRevenuePerAccount((List<Opportunity>)Trigger.old);
+    }
+    public static void afterUnDelete(){
+        totalRevenuePerAccount((List<Opportunity>)Trigger.new); 
+    }
+    
+    public static void totalRevenuePerAccount(List<Opportunity> givenOpps){
+        List<Id> accIds = new List<Id>();
+        for(Opportunity opp : givenOpps){
+            accIds.add(opp.AccountId);
+            System.debug('Revenue : '+opp.Revenue__c);
+        }
+        List<Account> accList = [Select Id,TotalRevenue__c,(Select Id,Revenue__c,AccountId from Opportunities) from Account where Id IN:accIds ];
+        System.debug('AccList : '+accList);
+        Decimal total = 0;
+        for(Account acc : accList){
+            total = 0;
+            for(Opportunity opp : acc.Opportunities){
+                System.debug('Rev : '+opp.Revenue__c);
+                if(opp.Revenue__c!=null){
+                    total+=opp.Revenue__c;
+                }
+                
+               
+                System.debug('Total : '+total);
+            }
+            
+            System.debug('Total Acc : '+acc.TotalRevenue__c);
+            acc.TotalRevenue__c = total;
+        }
+       update accList; 
+    }
+    
+    public static void totalRevenuePerAccountAfterUpdate(){
+        
+        Set<Id> accIds = new Set<Id>();
+        for(Opportunity opp : (List<Opportunity>)Trigger.new){
+            accIds.add(opp.AccountId);
+            System.debug('Opp : '+opp.Name);
+            System.debug('Opp : '+opp.Revenue__c);
+            System.debug('Opp : '+opp.AccountId);
+            Opportunity OldOpp = (Opportunity)Trigger.oldMap.get(opp.Id);
+            if(OldOpp.AccountId!=null){
+               accIds.add(OldOpp.AccountId); 
+            }
+            
+        }
+        List<Account> accList = [Select Id,TotalRevenue__c,(Select Id,Revenue__c from Opportunities) from Account where Id IN:accIds];
+        Decimal total = 0;
+        for(Account acc : accList){
+            total = 0;
+            for(Opportunity opp : acc.Opportunities){
+                System.debug('val : '+opp.Revenue__c);
+                if(opp.Revenue__c!=null){
+                    total += opp.Revenue__c;
+                }
+                
+            }
+            acc.TotalRevenue__c = total;
+        }
+        update accList;
+    }
+}

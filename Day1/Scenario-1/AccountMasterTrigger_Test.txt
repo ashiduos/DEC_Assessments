@@ -1,0 +1,34 @@
+@isTest
+public class AccountMasterTrigger_Test {
+    
+    @TestSetup
+    public static void AccountTriggerHandler_TestMethod(){
+        Account acc = new Account();
+        acc.Name = 'testAccount';
+        acc.Rating = 'Hot';
+        insert acc;
+        List<Contact> conList = new List<Contact>();
+        for(Integer i =0;i<5;i++){
+            Contact cont = new Contact();
+            cont.FirstName = 'Test';
+            cont.LastName = 'Contact '+(i+1);
+            cont.AccountId = acc.Id;
+            conList.add(cont);
+            
+        }
+        insert conList; 
+    }
+    @isTest
+    public static void afterUpdateTest(){
+        Account acc = [Select Id,Rating,Name from Account where Name = 'testAccount' LIMIT 1];
+        acc.Rating = 'Warm';
+        test.startTest();
+        update acc;
+        List<Contact> conList = [Select Id,FirstName,LastName,AccountId,Description from Contact where AccountId =: acc.Id];
+        //System.debug('Con '+conList[0].Description);
+        //System.assertEquals('Con Related Account testAccount has a Rating Warm',conList[0].Description );
+        System.assertEquals('Account rating field was changed from Hot to Warm', conList[0].Description);
+        test.stopTest();
+    }
+
+}

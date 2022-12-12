@@ -1,0 +1,46 @@
+@isTest
+public class OpportunityTriggerHandler_Test {
+    @TestSetup
+    public static void OpportunityTriggerHandler_TestMethod(){
+        Account acc = new Account();
+        acc.Name = 'testAccount';
+        
+        insert acc;
+        List<Opportunity> oppList = new List<Opportunity>();
+        for(Integer i =0;i<5;i++){
+            Opportunity Opp = new Opportunity();
+            opp.Name = 'Test Opp'+(i+1);
+            opp.AccountId = acc.Id;
+            opp.Revenue__c = i+25;
+            opp.StageName = 'Closed/Won';
+            opp.CloseDate = Date.newInstance(2023, 12, 28);
+            oppList.add(opp);
+            
+        }
+        insert oppList; 
+    }
+    @isTest
+    public static void afterUpdateTest(){
+        Account acc = [Select Id,Rating,Name,TotalRevenue__c from Account where Name = 'testAccount' LIMIT 1];
+        test.startTest();
+        
+        List<Opportunity> oppList = [Select Id,AccountId,Revenue__c from Opportunity where AccountId =: acc.Id];
+        System.debug('Revenue Test '+Acc.TotalRevenue__c);
+        oppList[1].Name = 'NeeOpp';
+        update oppList[1];
+        Opportunity Opp = new Opportunity();
+            opp.Name = 'Test Opp New';
+            opp.AccountId = acc.Id;
+            opp.Revenue__c = 50;
+            opp.StageName = 'Closed/Won';
+            opp.CloseDate = Date.newInstance(2023, 12, 28);
+        insert opp;
+        delete opp;
+        undelete opp;
+        
+        
+        System.assertEquals(135, acc.TotalRevenue__c);
+        test.stopTest();
+    }    
+
+}

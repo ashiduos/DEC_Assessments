@@ -1,0 +1,2 @@
+mplement rollup summary using apex trigger to calculate the sum of Revenue present in all related opportunities in account record. 
+Account field: TotalRevenue__c, Opportunity field: Revenue. Use Trigger handler and do code coverage as well.
