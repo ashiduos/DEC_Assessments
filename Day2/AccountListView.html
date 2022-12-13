@@ -1,0 +1,24 @@
+<template>
+    <lightning-card title="Accounts" icon-name="standard:account">
+        <div class="slds-m-around_medium">
+            <lightning-layout multiple-rows>
+                <lightning-layout-item size="4" padding="around-small">
+                    <lightning-input type="search" label="Search Account" onchange={seachAccounts}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="7" padding="around-small">
+                </lightning-layout-item>
+                <lightning-layout-item size="1" padding="around-small">
+                    <lightning-button variant="brand" label="New" title="Primary action" onclick={handleClick} ></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+            <template if:true={data}>
+                <lightning-datatable key-field="Id" data={data} columns={columns} hide-checkbox-column="true"
+                    show-row-number-column="true" >
+                </lightning-datatable>
+            </template>
+            <template if:true={error}>
+                {error}>
+            </template>
+        </div>
+    </lightning-card>
+</template>
